@@ -2,15 +2,17 @@ trigger:
   branches:
     include:
       - main
-paths:
-  include:
-    - '*'
+  paths:
+    include:
+      - '*'
 
 variables:
   # Pipeline variables
   - name: dockerHubUsername
     value: 'aravasaikrishna'    # Your Docker Hub username
   - name: imageRepository
+    value: 'food-delivery'
+  - name: k8sNamespace
     value: 'food-delivery'
 
 pool:
@@ -29,7 +31,7 @@ stages:
           command: buildAndPush
           containerRegistry: 'food-delivery-docker-hub'
           repository: $(dockerHubUsername)/$(imageRepository)-backend
-          dockerfile: $(Build.SourcesDirectory)/backend/Dockerfile
+          dockerfile: $(Build.SourcesDirectory)/FoodDelivery/backend/Dockerfile
           tags: |
             $(Build.BuildId)
             latest
@@ -40,7 +42,48 @@ stages:
           command: buildAndPush
           containerRegistry: 'food-delivery-docker-hub'
           repository: $(dockerHubUsername)/$(imageRepository)-frontend
-          dockerfile: $(Build.SourcesDirectory)/frontend/Dockerfile
+          dockerfile: $(Build.SourcesDirectory)/FoodDelivery/frontend/Dockerfile
           tags: |
             $(Build.BuildId)
-            latest 
+            latest
+
+  - stage: Deploy
+    displayName: Deploy to AKS
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+    - deployment: Deploy
+      displayName: Deploy to AKS
+      environment: 'production'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: KubernetesManifest@0
+              displayName: Create namespace
+              inputs:
+                action: createNamespace
+                namespace: $(k8sNamespace)
+
+            - task: KubernetesManifest@0
+              displayName: Deploy ConfigMap and Secrets
+              inputs:
+                action: deploy
+                namespace: $(k8sNamespace)
+                manifests: |
+                  $(Build.SourcesDirectory)/k8s/backend-config.yaml
+                  $(Build.SourcesDirectory)/k8s/backend-secrets.yaml
+                
+            - task: KubernetesManifest@0
+              displayName: Deploy to AKS
+              inputs:
+                action: deploy
+                namespace: $(k8sNamespace)
+                manifests: |
+                  $(Build.SourcesDirectory)/k8s/backend-deployment.yaml
+                  $(Build.SourcesDirectory)/k8s/frontend-deployment.yaml
+                  $(Build.SourcesDirectory)/k8s/backend-service.yaml
+                  $(Build.SourcesDirectory)/k8s/frontend-service.yaml
+                containers: |
+                  $(dockerHubUsername)/$(imageRepository)-backend:$(Build.BuildId)
+                  $(dockerHubUsername)/$(imageRepository)-frontend:$(Build.BuildId)
