@@ -12,8 +12,6 @@ variables:
     value: 'aravasaikrishna'    # Your Docker Hub username
   - name: imageRepository
     value: 'food-delivery'
-  - name: k8sNamespace
-    value: 'food-delivery'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -46,44 +44,3 @@ stages:
           tags: |
             $(Build.BuildId)
             latest
-
-  - stage: Deploy
-    displayName: Deploy to AKS
-    dependsOn: Build
-    condition: succeeded()
-    jobs:
-    - deployment: Deploy
-      displayName: Deploy to AKS
-      environment: 'production'
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-            - task: KubernetesManifest@0
-              displayName: Create namespace
-              inputs:
-                action: createNamespace
-                namespace: $(k8sNamespace)
-
-            - task: KubernetesManifest@0
-              displayName: Deploy ConfigMap and Secrets
-              inputs:
-                action: deploy
-                namespace: $(k8sNamespace)
-                manifests: |
-                  $(Build.SourcesDirectory)/k8s/backend-config.yaml
-                  $(Build.SourcesDirectory)/k8s/backend-secrets.yaml
-                
-            - task: KubernetesManifest@0
-              displayName: Deploy to AKS
-              inputs:
-                action: deploy
-                namespace: $(k8sNamespace)
-                manifests: |
-                  $(Build.SourcesDirectory)/k8s/backend-deployment.yaml
-                  $(Build.SourcesDirectory)/k8s/frontend-deployment.yaml
-                  $(Build.SourcesDirectory)/k8s/backend-service.yaml
-                  $(Build.SourcesDirectory)/k8s/frontend-service.yaml
-                containers: |
-                  $(dockerHubUsername)/$(imageRepository)-backend:$(Build.BuildId)
-                  $(dockerHubUsername)/$(imageRepository)-frontend:$(Build.BuildId)
