@@ -10,16 +10,10 @@ variables:
   # Variable group reference
   - group: 'FoodDelivery-Secrets'
   # Pipeline variables
-  - name: dockerRegistryServiceConnection
-    value: 'food-delivery-docker-registry'
+  - name: dockerHubUsername
+    value: 'your-dockerhub-username'  # Replace with your Docker Hub username
   - name: imageRepository
     value: 'food-delivery'
-  - name: containerRegistry
-    value: 'fooddelivery.azurecr.io'
-  - name: dockerfilePath
-    value: '$(Build.SourcesDirectory)/**/Dockerfile'
-  - name: tag
-    value: '$(Build.BuildId)'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -35,22 +29,22 @@ stages:
             displayName: Build and push backend image
             inputs:
               command: buildAndPush
-              repository: $(imageRepository)-backend
+              containerRegistry: 'food-delivery-docker-hub'
+              repository: $(dockerHubUsername)/$(imageRepository)-backend
               dockerfile: $(Build.SourcesDirectory)/backend/Dockerfile
-              containerRegistry: $(dockerRegistryServiceConnection)
               tags: |
-                $(tag)
+                $(Build.BuildId)
                 latest
 
           - task: Docker@2
             displayName: Build and push frontend image
             inputs:
               command: buildAndPush
-              repository: $(imageRepository)-frontend
+              containerRegistry: 'food-delivery-docker-hub'
+              repository: $(dockerHubUsername)/$(imageRepository)-frontend
               dockerfile: $(Build.SourcesDirectory)/frontend/Dockerfile
-              containerRegistry: $(dockerRegistryServiceConnection)
               tags: |
-                $(tag)
+                $(Build.BuildId)
                 latest
 
   - stage: Deploy
@@ -65,12 +59,12 @@ stages:
             displayName: Deploy to Kubernetes
             inputs:
               action: 'deploy'
-              kubernetesServiceConnection: 'food-delivery-aks'
+              kubernetesServiceConnection: 'food-delivery-k8s'
               namespace: 'food-delivery'
               manifests: |
                 $(Build.SourcesDirectory)/k8s/backend-deployment.yaml
                 $(Build.SourcesDirectory)/k8s/frontend-deployment.yaml
                 $(Build.SourcesDirectory)/k8s/mongodb-deployment.yaml
               containers: |
-                $(containerRegistry)/$(imageRepository)-backend:$(tag)
-                $(containerRegistry)/$(imageRepository)-frontend:$(tag) 
+                $(dockerHubUsername)/$(imageRepository)-backend:$(Build.BuildId)
+                $(dockerHubUsername)/$(imageRepository)-frontend:$(Build.BuildId) 
