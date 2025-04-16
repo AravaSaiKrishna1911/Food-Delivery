@@ -1,0 +1,247 @@
+.navbar {
+    padding: 20px 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* LOGO */
+.navbar .logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #FF4C24;
+    text-decoration: none;
+}
+
+/* NAV MENU - SEPARATE BOXES FOR EACH ITEM */
+.navbar-menu {
+    display: flex;
+    list-style: none;
+    gap: 15px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.navbar-menu a, .navbar-menu span {
+    text-decoration: none;
+    color: #FF4C24;
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: 1px solid #FF4C24;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.navbar-menu a:hover, .navbar-menu span:hover {
+    background-color: #FF4C24;
+    color: white;
+}
+
+.navbar-menu .active {
+    background-color: #FF4C24;
+    color: white;
+    border-bottom: 3px solid #FF4C24;
+}
+
+/* NAVBAR RIGHT */
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+/* ICONS */
+.navbar-icon {
+    font-size: 26px;
+    color: #49557E;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.navbar-icon:hover {
+    color: #FF4C24;
+    transform: scale(1.1);
+}
+
+/* CART ICON */
+.navbar-search-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-search-icon .dot {
+    position: absolute;
+    min-width: 12px;
+    min-height: 12px;
+    background-color: #FF4C24;
+    border-radius: 50%;
+    top: -5px;
+    right: -5px;
+}
+
+/* BUTTON */
+.navbar-right button {
+    background: transparent;
+    font-size: 18px;
+    color: #49557E;
+    border: 2px solid #FF4C24;
+    padding: 10px 25px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: 500;
+}
+
+.navbar-right button:hover {
+    background: #fff4f2;
+}
+
+/* PROFILE */
+.navbar-profile {
+    position: relative;
+    cursor: pointer;
+}
+
+.navbar-profile-dropdown {
+    position: absolute;
+    display: none;
+    right: 0;
+    z-index: 1;
+}
+
+.navbar-profile-dropdown li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 8px 12px;
+}
+
+.navbar-profile-dropdown .navbar-icon {
+    font-size: 22px;
+}
+
+.navbar-profile-dropdown li:hover {
+    color: #FF4C24;
+}
+
+.navbar-profile:hover .navbar-profile-dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: #fff2ef;
+    padding: 14px 25px;
+    border-radius: 6px;
+    border: 1px solid tomato;
+    outline: 2px solid white;
+    list-style: none;
+}
+
+/* SEARCH BAR */
+.search-bar {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    padding: 5px 15px;
+    background-color: white;
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    padding: 8px;
+    font-size: 14px;
+    width: 160px;
+}
+
+.search-button {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-button:focus {
+    outline: none;
+}
+
+.search-bar .navbar-icon {
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 22px;
+    color: #49557E;
+}
+
+/* Responsive Design */
+@media (max-width: 1050px) {
+    .navbar .logo {
+        font-size: 24px;
+    }
+
+    .navbar-menu {
+        gap: 12px;
+        font-size: 18px;
+    }
+
+    .navbar-menu a, .navbar-menu span {
+        padding: 8px 16px;
+    }
+
+    .navbar-right {
+        gap: 25px;
+    }
+
+    .navbar-icon {
+        font-size: 24px;
+    }
+
+    .navbar-right button {
+        font-size: 16px;
+        padding: 8px 20px;
+    }
+}
+
+@media (max-width: 900px) {
+    .navbar .logo {
+        font-size: 22px;
+    }
+
+    .navbar-menu {
+        gap: 10px;
+        font-size: 16px;
+    }
+
+    .navbar-menu a, .navbar-menu span {
+        padding: 6px 12px;
+    }
+
+    .navbar-right {
+        gap: 20px;
+    }
+
+    .navbar-icon {
+        font-size: 22px;
+    }
+
+    .navbar-right button {
+        font-size: 15px;
+        padding: 6px 16px;
+    }
+}
+
+@media (max-width: 750px) {
+    .navbar-menu {
+        display: none;
+    }
+
+    .navbar-icon {
+        font-size: 22px;
+    }
+}

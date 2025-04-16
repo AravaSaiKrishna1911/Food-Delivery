@@ -1,0 +1,75 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - '**'
+
+variables:
+  - group: FoodDelivery-Secrets
+  - name: dockerRegistryServiceConnection
+    value: 'food-delivery-docker-registry'
+  - name: imageRepository
+    value: 'food-delivery'
+  - name: containerRegistry
+    value: 'fooddelivery.azurecr.io'
+  - name: dockerfilePath
+    value: '$(Build.SourcesDirectory)/**/Dockerfile'
+  - name: tag
+    value: '$(Build.BuildId)'
+
+stages:
+  - stage: Build
+    displayName: Build and push stage
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: Docker@2
+            displayName: Build and push backend image
+            inputs:
+              command: buildAndPush
+              repository: $(imageRepository)-backend
+              dockerfile: $(Build.SourcesDirectory)/backend/Dockerfile
+              containerRegistry: $(dockerRegistryServiceConnection)
+              tags: |
+                $(tag)
+                latest
+
+          - task: Docker@2
+            displayName: Build and push frontend image
+            inputs:
+              command: buildAndPush
+              repository: $(imageRepository)-frontend
+              dockerfile: $(Build.SourcesDirectory)/frontend/Dockerfile
+              containerRegistry: $(dockerRegistryServiceConnection)
+              tags: |
+                $(tag)
+                latest
+
+  - stage: Deploy
+    displayName: Deploy stage
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - job: Deploy
+        displayName: Deploy
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes
+            inputs:
+              action: 'deploy'
+              kubernetesServiceConnection: 'food-delivery-aks'
+              namespace: 'food-delivery'
+              manifests: |
+                $(Build.SourcesDirectory)/k8s/backend-deployment.yaml
+                $(Build.SourcesDirectory)/k8s/frontend-deployment.yaml
+                $(Build.SourcesDirectory)/k8s/mongodb-deployment.yaml
+              containers: |
+                $(containerRegistry)/$(imageRepository)-backend:$(tag)
+                $(containerRegistry)/$(imageRepository)-frontend:$(tag) 

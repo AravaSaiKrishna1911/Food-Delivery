@@ -1,0 +1,176 @@
+.my-orders {
+    margin: 50px 0;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+}
+
+.my-orders h2 {
+    text-align: center;
+    color: #222;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.my-orders .container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 0 15px;
+}
+
+/* Order Card - Ensuring Columns */
+.my-orders-order {
+    display: grid;
+    grid-template-columns: 50px 2fr 1fr 1fr 1fr 1fr; /* Image | Item | Price | Qty | Status | Button */
+    align-items: center;
+    font-size: 16px;
+    padding: 15px;
+    color: #333;
+    border: 2px solid #ff6347;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+/* Hover Effect */
+.my-orders-order:hover {
+    transform: scale(1.01);
+    background: #fff3f3;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Product Image */
+.my-orders-order img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+/* Ensure All Texts Are Aligned */
+.my-orders-order p {
+    text-align: center;
+    font-size: 15px;
+    color: #444;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Product Name */
+.my-orders-order p:first-of-type {
+    text-align: left;
+    font-weight: 600;
+}
+
+/* Price */
+.my-orders-order p:nth-of-type(2),
+/* Quantity */
+.my-orders-order p:nth-of-type(3) {
+    text-align: center;
+}
+
+/* Order Status */
+.my-orders-order p:last-of-type {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff6347;
+}
+
+/* Cancel Button */
+.my-orders-order button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background-color: #ff5757;
+    cursor: pointer;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    width: 100px;
+}
+
+.my-orders-order button:hover {
+    background-color: #e63b3b;
+    transform: scale(1.03);
+}
+
+/* Responsive Design */
+@media (max-width: 1000px) {
+    .my-orders-order {
+        grid-template-columns: 40px 2fr 1fr 1fr 1fr 1fr; /* Adjust column sizes */
+        font-size: 14px;
+        padding: 12px;
+    }
+    
+    .my-orders-order p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .my-orders-order {
+        grid-template-columns: 50px 2fr 1fr; /* Stack some items */
+        gap: 10px;
+        padding: 12px;
+    }
+    
+    .my-orders-order img {
+        order: 1;
+    }
+    
+    .my-orders-order p:first-of-type {
+        order: 2;
+        text-align: left;
+        flex: 1 1 100%;
+    }
+    
+    .my-orders-order p:nth-of-type(2),
+    .my-orders-order p:nth-of-type(3) {
+        order: 3;
+        text-align: center;
+    }
+    
+    .my-orders-order p:last-of-type {
+        order: 4;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .my-orders-order button {
+        order: 5;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .my-orders {
+        padding: 20px 10px;
+    }
+    
+    .my-orders h2 {
+        font-size: 22px;
+    }
+    
+    .my-orders-order {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 12px;
+    }
+    
+    .my-orders-order p,
+    .my-orders-order button {
+        font-size: 13px;
+        text-align: center;
+    }
+    
+    .my-orders-order button {
+        width: 100%;
+    }
+}
