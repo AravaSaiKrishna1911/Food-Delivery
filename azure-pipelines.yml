@@ -7,7 +7,9 @@ trigger:
       - '**'
 
 variables:
-  - group: FoodDelivery-Secrets
+  # Variable group reference
+  - group: 'FoodDelivery-Secrets'
+  # Pipeline variables
   - name: dockerRegistryServiceConnection
     value: 'food-delivery-docker-registry'
   - name: imageRepository
@@ -19,14 +21,15 @@ variables:
   - name: tag
     value: '$(Build.BuildId)'
 
+pool:
+  vmImage: 'ubuntu-latest'
+
 stages:
   - stage: Build
     displayName: Build and push stage
     jobs:
       - job: Build
         displayName: Build
-        pool:
-          vmImage: 'ubuntu-latest'
         steps:
           - task: Docker@2
             displayName: Build and push backend image
@@ -57,8 +60,6 @@ stages:
     jobs:
       - job: Deploy
         displayName: Deploy
-        pool:
-          vmImage: 'ubuntu-latest'
         steps:
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes
